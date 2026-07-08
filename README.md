@@ -1,0 +1,35 @@
+# FLOW Yoga | Founding List Funnel
+
+Production funnel for `join.findyourflow.com.au` (FLOW, infrared heated yoga, Coffs Harbour Jetty | Enlightspace Pty Ltd). Register-interest landing at `/`, confirmation at `/thanks/`.
+
+Built from the approved V4 mockup (`kaizen-artifacts/flow-register`, Dale + Hayley feedback rounds 1-5). The mockup with the V1-V4 toggle stays live at artifacts.kaizencollective.com.au/flow-register/ as the review sandbox.
+
+## Architecture
+
+Small Express app (Kaizen client-funnel pattern, like spine-health-funnel / scoop-booking):
+
+- Static pages from `public/`
+- `POST /api/register`: every lead appends to `data/leads.jsonl` (persistent volume) FIRST; pushed to the Kaizen CRM (GHL upsert) when env is configured
+- `GET /api/stats`: secret-gated via `x-lighthouse-secret` header, for the Lighthouse funnel registry
+- `GET /healthz`
+
+## Env (set in Coolify, never in this public repo)
+
+| Var | Purpose |
+|---|---|
+| `GHL_PIT` | Private Integration Token for the Kaizen agency (Flow location) |
+| `GHL_LOCATION_ID` | `QbAVgTOKdJPrtPKzWxsu` (Flow Yoga in Kaizen GHL) |
+| `STATS_SECRET` | Header secret for `/api/stats` |
+| `DATA_DIR` | Defaults to `./data`; Coolify persistent volume mounts `/app/data` |
+
+Leads captured before `GHL_PIT` is set carry `"ghl":"not-configured"` in the ledger; backfill them once the CRM build lands.
+
+## Deploy
+
+Coolify app on the Lighthouse droplet (170.64.153.122), manual deploy trigger (no GitHub webhook). Persistent volume at `/app/data` or a redeploy wipes the ledger.
+
+## Still to build (tracking layers per the Kaizen funnel checklist)
+
+- Meta pixel + CAPI (needs Dale's Business Manager, Chloe's setup task)
+- GHL custom fields for Heat/Level/Flow finder picks + UTM attribution
+- Lighthouse funnel registry entry + heartbeat
