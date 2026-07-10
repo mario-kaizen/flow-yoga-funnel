@@ -19,6 +19,17 @@ Small Express app (Kaizen client-funnel pattern, like spine-health-funnel / scoo
 |---|---|
 | `GHL_PIT` | Private Integration Token for the Kaizen agency (Flow location) |
 | `GHL_LOCATION_ID` | `QbAVgTOKdJPrtPKzWxsu` (Flow Yoga in Kaizen GHL) |
+| `GHL_FIELD_HEAT` | Optional override for Flow Finder Heat Preference field |
+| `GHL_FIELD_LEVEL` | Optional override for Flow Finder Level Preference field |
+| `GHL_FIELD_FLOW` | Optional override for Flow Finder Pace Preference field |
+| `GHL_FIELD_PAGE` | Optional override for Flow Funnel Page field |
+| `GHL_FIELD_UTM_SOURCE` | Optional override for Flow UTM Source field |
+| `GHL_FIELD_UTM_MEDIUM` | Optional override for Flow UTM Medium field |
+| `GHL_FIELD_UTM_CAMPAIGN` | Optional override for Flow UTM Campaign field |
+| `GHL_FIELD_FBCLID` | Optional override for Flow Facebook Click ID field |
+| `GHL_FIELD_FBC` | Optional override for Flow FBC field |
+| `GHL_FIELD_FBP` | Optional override for Flow FBP field |
+| `GHL_FIELD_CONSENT` | Optional override for Flow Marketing Consent field |
 | `STATS_SECRET` | Header secret for `/api/stats` |
 | `DATA_DIR` | Defaults to `./data`; Coolify persistent volume mounts `/app/data` |
 
@@ -31,5 +42,5 @@ Coolify app on the Lighthouse droplet (170.64.153.122), manual deploy trigger (n
 ## Still to build (tracking layers per the Kaizen funnel checklist)
 
 - Meta pixel + CAPI (needs Dale's Business Manager, Chloe's setup task)
-- GHL custom fields for Heat/Level/Flow finder picks + UTM attribution
+- Coolify env update with `GHL_PIT` if it is not already set in production
 - Lighthouse funnel registry entry + heartbeat

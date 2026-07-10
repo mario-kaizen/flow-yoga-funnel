@@ -9,6 +9,24 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const LEDGER = path.join(DATA_DIR, "leads.jsonl");
+const FLOW_FIELD_IDS = {
+  heat: process.env.GHL_FIELD_HEAT || "5cfR28VQe7ZV0R3IbxSJ",
+  level: process.env.GHL_FIELD_LEVEL || "iJUcb32VwQOuNXCp0AK4",
+  flow: process.env.GHL_FIELD_FLOW || "GXjhg0Jh3tqwr6t0RjJB",
+  page: process.env.GHL_FIELD_PAGE || "ELyjCRnre3sBJg5LN5IA",
+  utm_source: process.env.GHL_FIELD_UTM_SOURCE || "PO8orhrD6coQDTCwmt8W",
+  utm_medium: process.env.GHL_FIELD_UTM_MEDIUM || "cXmOT46eIarfQBkcissZ",
+  utm_campaign: process.env.GHL_FIELD_UTM_CAMPAIGN || "raZ2ou6N4UISnCOcpuRZ",
+  fbclid: process.env.GHL_FIELD_FBCLID || "lmFkU1OjxuRtpz6tD8W3",
+  fbc: process.env.GHL_FIELD_FBC || "cjpM9f2l4A6dJqWJsliX",
+  fbp: process.env.GHL_FIELD_FBP || "januS1dVdy8exa9QMfpw",
+  consent: process.env.GHL_FIELD_CONSENT || "E4SSCP3ljV7kLvYBfvDd",
+};
+const FIELD_LABELS = {
+  heat: { high: "High heat", med: "Medium heat", low: "Low heat" },
+  level: { "1": "Advanced", "2": "Intermediate", "3": "Foundation" },
+  flow: { a: "Dynamic", b: "Slow", c: "Mellow" },
+};
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -72,6 +90,7 @@ async function pushToGhl(lead) {
         phone: lead.phone || undefined,
         source: "Founding List | join.findyourflow.com.au",
         tags: ["founding-list", "flow-funnel"],
+        customFields: customFieldsForGhl(lead),
       }),
       signal: AbortSignal.timeout(6000),
     });
@@ -84,6 +103,25 @@ async function pushToGhl(lead) {
     console.error("GHL upsert error", err.message);
     return "error";
   }
+}
+
+function customFieldsForGhl(lead) {
+  const values = {
+    heat: FIELD_LABELS.heat[lead.heat] || lead.heat,
+    level: FIELD_LABELS.level[lead.level] || lead.level,
+    flow: FIELD_LABELS.flow[lead.flow] || lead.flow,
+    page: lead.page,
+    utm_source: lead.utm_source,
+    utm_medium: lead.utm_medium,
+    utm_campaign: lead.utm_campaign,
+    fbclid: lead.fbclid,
+    fbc: lead.fbc,
+    fbp: lead.fbp,
+    consent: lead.consent ? "Yes" : "No",
+  };
+  return Object.entries(values)
+    .filter(([key, value]) => FLOW_FIELD_IDS[key] && value)
+    .map(([key, value]) => ({ id: FLOW_FIELD_IDS[key], value }));
 }
 
 // Secret-gated stats for the Lighthouse registry (header auth only, never query param)
