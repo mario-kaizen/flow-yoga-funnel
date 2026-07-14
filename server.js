@@ -4,6 +4,7 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,6 +28,11 @@ const FIELD_LABELS = {
   level: { "1": "Advanced", "2": "Intermediate", "3": "Foundation" },
   flow: { a: "Dynamic", b: "Slow", c: "Mellow" },
 };
+
+// Meta Pixel + Conversions API. Pixel id is public (also hardcoded in the page);
+// the CAPI token is a secret and only ever comes from the environment.
+const META_PIXEL_ID = process.env.META_PIXEL_ID || "1041284571925635";
+const META_CAPI_TOKEN = process.env.META_CAPI_TOKEN;
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -63,10 +69,19 @@ app.post("/api/register", async (req, res) => {
     page: String(b.page || ""),
     ip: req.headers["x-forwarded-for"] || req.socket.remoteAddress || "",
     ua: req.headers["user-agent"] || "",
-    ghl: "pending",
   };
 
-  lead.ghl = await pushToGhl(lead);
+  // Shared event id lets the browser Pixel and this server-side CAPI event
+  // deduplicate into one Lead in Meta. The page sends its id; fall back if absent.
+  const eventId = String(b.event_id || "").trim() || crypto.randomUUID();
+  lead.event_id = eventId;
+
+  const [ghlResult, capiResult] = await Promise.all([
+    pushToGhl(lead),
+    pushToMetaCapi(lead, eventId),
+  ]);
+  lead.ghl = ghlResult;
+  lead.capi = capiResult;
   fs.appendFileSync(LEDGER, JSON.stringify(lead) + "\n");
   res.json({ ok: true });
 });
@@ -101,6 +116,55 @@ async function pushToGhl(lead) {
     return "ok";
   } catch (err) {
     console.error("GHL upsert error", err.message);
+    return "error";
+  }
+}
+
+// Server-side Lead via the Meta Conversions API. Mirrors the browser Pixel's
+// Lead using the same event_id so Meta counts one, not two. Never throws into
+// the request path: a CAPI hiccup must not cost us the lead.
+async function pushToMetaCapi(lead, eventId) {
+  if (!META_CAPI_TOKEN || !META_PIXEL_ID) return "not-configured";
+  const sha = (v) => crypto.createHash("sha256").update(String(v).trim().toLowerCase()).digest("hex");
+  const user_data = {};
+  if (lead.ua) user_data.client_user_agent = lead.ua;
+  if (lead.email) user_data.em = [sha(lead.email)];
+  if (lead.phone) user_data.ph = [sha(String(lead.phone).replace(/[^\d]/g, ""))];
+  if (lead.fbc) user_data.fbc = lead.fbc;
+  if (lead.fbp) user_data.fbp = lead.fbp;
+  const ip = String(lead.ip || "").split(",")[0].trim();
+  if (ip) user_data.client_ip_address = ip;
+
+  const payload = {
+    data: [
+      {
+        event_name: "Lead",
+        event_time: Math.floor(Date.now() / 1000),
+        event_id: eventId,
+        action_source: "website",
+        event_source_url: lead.page || "https://join.findyourflow.com.au/",
+        user_data,
+      },
+    ],
+  };
+
+  try {
+    const r = await fetch(
+      `https://graph.facebook.com/v21.0/${META_PIXEL_ID}/events?access_token=${META_CAPI_TOKEN}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(6000),
+      }
+    );
+    if (!r.ok) {
+      console.error("Meta CAPI failed", r.status, (await r.text()).slice(0, 300));
+      return `failed-${r.status}`;
+    }
+    return "ok";
+  } catch (err) {
+    console.error("Meta CAPI error", err.message);
     return "error";
   }
 }

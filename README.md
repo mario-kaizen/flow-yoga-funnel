@@ -30,10 +30,12 @@ Small Express app (Kaizen client-funnel pattern, like spine-health-funnel / scoo
 | `GHL_FIELD_FBC` | Optional override for Flow FBC field |
 | `GHL_FIELD_FBP` | Optional override for Flow FBP field |
 | `GHL_FIELD_CONSENT` | Optional override for Flow Marketing Consent field |
+| `META_PIXEL_ID` | Meta Pixel `1041284571925635` (public; also hardcoded in the page). Env is an optional override for the CAPI side |
+| `META_CAPI_TOKEN` | Conversions API access token (secret). When set, `/api/register` sends a server-side `Lead` deduplicated with the browser Pixel by `event_id` |
 | `STATS_SECRET` | Header secret for `/api/stats` |
 | `DATA_DIR` | Defaults to `./data`; Coolify persistent volume mounts `/app/data` |
 
-Leads captured before `GHL_PIT` is set carry `"ghl":"not-configured"` in the ledger; backfill them once the CRM build lands.
+Each ledger row records both `"ghl"` and `"capi"` push status (`ok` / `not-configured` / `failed-<code>` / `error`) plus the shared `event_id`. Leads captured before a credential is set carry `"not-configured"` for that channel; backfill if needed.
 
 ## Deploy
 
@@ -41,6 +43,4 @@ Coolify app on the Lighthouse droplet (170.64.153.122), manual deploy trigger (n
 
 ## Still to build (tracking layers per the Kaizen funnel checklist)
 
-- Meta pixel + CAPI (needs Dale's Business Manager, Chloe's setup task)
-- Coolify env update with `GHL_PIT` if it is not already set in production
 - Lighthouse funnel registry entry + heartbeat
