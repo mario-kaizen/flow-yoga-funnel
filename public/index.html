@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FLOW | Infrared Heated Yoga | Coffs Harbour Jetty</title>
-<meta name="description" content="FLOW is a new infrared heated yoga studio opening in the Jetty precinct, Coffs Harbour. Join the founding list for first access to the 21 day intro and one of only 100 foundation memberships.">
+<meta name="description" content="FLOW is a new infrared heated yoga studio opening in the Jetty precinct, Coffs Harbour. Claim two free classes and feel the room before you decide.">
 <link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -191,6 +191,14 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
   .v2-sepia{filter:sepia(.14) contrast(1.02) brightness(.97)}
   .own-fr{background-position:center !important}
   .v2-grow-fear{aspect-ratio:4/5 !important;background-size:235% !important;background-position:55% 72% !important}
+
+  /* ---- V5 refinements (two free classes) ---- */
+  .founding .fgrid{grid-template-columns:minmax(240px,.7fr) minmax(0,1.3fr)}
+  @media(max-width:880px){.founding .fgrid{grid-template-columns:1fr}}
+  .btn{font-size:16px}
+  .register .sub,.register label,.consent,.register .fine{font-size:16px}
+  .consent label{font-size:16px !important}
+  .opt .ol,.opt .os,.result .rk{font-size:16px}
 </style>
 </head>
 <body>
@@ -202,19 +210,19 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
     <div>
       <img src="/assets/flow-logo.png" alt="Flow" class="flowmark-img">
 
-      <div class="eyebrow">Founding Presale · Coffs Harbour Jetty · Opening Soon</div>
-      <h1>Move Deeper. Flow In <span class="infra">Infrared Heat.</span></h1>
-      <p class="deck">Hot yoga that meets you exactly where you are. Sweat out the week, release what you have been holding, and walk out lighter. A new studio in the Jetty precinct, Coffs Harbour.</p>
+      <div class="eyebrow">Two Free Classes · Coffs Harbour Jetty · Opening Soon</div>
+      <h1>Claim Your <span class="infra">Two Free Classes.</span></h1>
+      <p class="deck">Meet FLOW before you decide if it is for you. Leave your details and Dale or the FLOW team will help you choose a class that suits where you are starting.</p>
       <div class="founding-bar">
-        <div class="fb"><b>01</b>Only 100 foundation memberships, ever</div>
-        <div class="fb"><b>02</b>First access to the timetable and your founding intro</div>
-        <div class="fb"><b>03</b>Your founding rate, locked in before we open</div>
+        <div class="fb"><b>01</b>Two infrared heated yoga classes, free</div>
+        <div class="fb"><b>02</b>Personal help choosing your starting class</div>
+        <div class="fb"><b>03</b>Experience FLOW before deciding about membership</div>
       </div>
     </div>
     <div class="register" id="register">
-      <div class="reg-flag">Founding Member List</div>
-      <h2>Claim Your Founding Spot.</h2>
-      <div class="sub">Join the founding list. Be first through the doors, and first in line for one of only 100 foundation memberships.</div>
+      <div class="reg-flag">Two Free Classes</div>
+      <h2>Claim Your Two Free Classes.</h2>
+      <div class="sub">Leave your details. Dale or the FLOW team will contact you and help you choose where to start.</div>
       <form id="regform">
         <label>Name</label>
         <input name="name" type="text" placeholder="Your name" autocomplete="name" required>
@@ -227,9 +235,9 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
           <input type="checkbox" id="cons" checked>
           <label for="cons" style="text-transform:none;letter-spacing:0;font-size:12px;color:var(--muted);margin:0">I agree to receive emails and texts from FLOW about studio updates and offers. Unsubscribe anytime.</label>
         </div>
-        <button type="submit" id="regbtn" class="btn block">Join The Founding List</button>
+        <button type="submit" id="regbtn" class="btn block">Claim My Two Free Classes</button>
       </form>
-      <div class="fine">No strings. Just be the first when doors open.</div>
+      <div class="fine">No payment. No commitment.</div>
     </div>
   </div>
 </section>
@@ -239,13 +247,13 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
   <div class="wrap split">
     <div class="sec-head">
       <span class="eyebrow">Why Infrared</span>
-      <h2 class="big">The Heat Does The Work.</h2>
-      <p class="lede">Infrared warms you from the inside, not the air around you. Muscles release deeper, circulation lifts, and you sweat out the week and the tension with it. Add mindful movement and breath, and it stops being a workout. It becomes a reset.</p>
+      <h2 class="big">A Different Kind Of Heat.</h2>
+      <p class="lede">FLOW uses infrared heat to create a warm room for movement. Every class is rated so you can see the heat, level and pace before you book.</p>
       <div class="outcomes">
-        <span class="chip"><b>·</b> Deeper release</span>
-        <span class="chip"><b>·</b> Real recovery</span>
-        <span class="chip"><b>·</b> A genuine reset</span>
-        <span class="chip"><b>·</b> Better sleep</span>
+        <span class="chip"><b>·</b> Warm room</span>
+        <span class="chip"><b>·</b> Mindful movement</span>
+        <span class="chip"><b>·</b> Guided breath</span>
+        <span class="chip"><b>·</b> Your pace</span>
       </div>
     </div>
     <div><div class="imgframe v2-grow-why" style="background-image:url('/assets/whyinfra.jpg')"></div></div>
@@ -258,11 +266,11 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
     <div class="sec-head narrow">
       <span class="eyebrow">The Flow System</span>
       <h2 class="big">Never Feel Out Of Place.</h2>
-      <p class="lede">Most people avoid yoga because they think they are not flexible, fit or advanced enough. So every Flow session is rated three ways. You're in control of how intense you flow. No guessing, no intimidation, just the class that fits you today.</p>
+      <p class="lede">Every FLOW class is rated by heat, level and pace. You can see exactly what you are walking into, choose what suits you today and begin without guessing.</p>
     </div>
 
     <div class="triptych">
-      <figure><div class="ph ph-heat" style="background-image:url('/assets/heat.jpg')"></div><figcaption><b>Heat</b><span>How warm you want it</span></figcaption></figure>
+      <figure><div class="ph ph-heat" style="background-image:url('/assets/heat.jpg')"></div><figcaption><b>Heat</b><span>The heat rating for each class</span></figcaption></figure>
       <figure><div class="ph" style="background-image:url('/assets/level.jpg')"></div><figcaption><b>Level</b><span>Challenge of the poses</span></figcaption></figure>
       <figure><div class="ph ph-flow" style="background-image:url('/assets/flow.jpg')"></div><figcaption><b>Flow</b><span>Pace of the class</span></figcaption></figure>
     </div>
@@ -271,11 +279,11 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
     <div class="finder">
       <div class="picks">
         <div class="pickrow">
-          <div class="plabel"><span class="k">Heat</span><span class="d">How warm you want it</span></div>
+          <div class="plabel"><span class="k">Heat</span><span class="d">The heat rating for each class</span></div>
           <div class="opts" data-group="heat">
-            <div class="opt" data-v="high" data-label="High heat"><span class="dot" style="background:var(--heat-high)"></span><span class="ol">High</span><span class="os">36–40&deg;C</span></div>
-            <div class="opt" data-v="med" data-label="Medium heat"><span class="dot" style="background:var(--heat-med)"></span><span class="ol">Medium</span><span class="os">31–35&deg;C</span></div>
-            <div class="opt on" data-v="low" data-label="Low heat"><span class="dot" style="background:var(--heat-low)"></span><span class="ol">Low</span><span class="os">26–30&deg;C</span></div>
+            <div class="opt" data-v="high" data-label="High heat"><span class="dot" style="background:var(--heat-high)"></span><span class="ol">High</span><span class="os">Highest heat</span></div>
+            <div class="opt" data-v="med" data-label="Medium heat"><span class="dot" style="background:var(--heat-med)"></span><span class="ol">Medium</span><span class="os">Mid heat</span></div>
+            <div class="opt on" data-v="low" data-label="Low heat"><span class="dot" style="background:var(--heat-low)"></span><span class="ol">Low</span><span class="os">Gentle heat</span></div>
           </div>
         </div>
         <div class="pickrow">
@@ -301,7 +309,7 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
         <div class="rk">Your starting point</div>
         <div class="rtitle" id="r-title">Foundation · Mellow · Low Heat</div>
         <div class="rdesc" id="r-desc">A gentle, grounding class in a soft warmth. Space to breathe, learn the shapes and ease in. The perfect first step.</div>
-        <a href="#register" class="btn">Save This As My Start</a>
+        <a href="#register" class="btn">Claim My Two Free Classes</a>
       </div>
     </div>
   </div>
@@ -313,13 +321,8 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
     <div class="split">
       <div class="sec-head">
         <span class="eyebrow">Your Founders</span>
-        <h2 class="big">They Built Coffs' Favourite Studio. <br><span style="white-space:nowrap">Now They're</span> Building Flow.</h2>
-        <p class="lede">Dale and Hayley opened STRONG Pilates Coffs Harbour and grew it to more than 200 members with a 5 star rating, right here in town. They know how to build a room people never want to leave. Flow is where they bring everything they have learned to the mat.</p>
-        <div class="statrow">
-          <div class="s"><b>200+</b><span>Members built</span></div>
-          <div class="s"><b>5.0</b><span>Google rating</span></div>
-          <div class="s"><b>Jetty</b><span>Coffs Harbour</span></div>
-        </div>
+        <h2 class="big">They Built STRONG Coffs Harbour. <br><span style="white-space:nowrap">Now They're</span> Building FLOW.</h2>
+        <p class="lede">Dale and Hayley opened STRONG Pilates Coffs Harbour right here in town. They know how to build a room people never want to leave. FLOW is where they bring everything they have learned to the mat.</p>
       </div>
       <div><div class="imgframe v2-sepia own-fr" style="aspect-ratio:4/5;background-image:url('/assets/owners.jpg')"></div></div>
     </div>
@@ -337,33 +340,27 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
 <section class="pad founding">
   <div class="wrap">
     <div class="sec-head narrow center" style="margin:0 auto">
-      <span class="eyebrow">Founding Members</span>
-      <h2 class="big">Only 100 Foundation Spots.</h2>
-      <p class="lede" style="margin:0 auto">When we open, foundation membership is capped at 100 people. That is the whole point of getting in now. Fewer people, your rate locked, and first pick of everything.</p>
+      <span class="eyebrow">After Your Two Classes</span>
+      <h2 class="big">If FLOW Feels Right, Ask About Foundation 100.</h2>
+      <p class="lede" style="margin:0 auto">Foundation membership will be limited to 100 people. Your two free classes come first. If FLOW feels right, the team can talk you through Foundation 100.</p>
     </div>
     <div class="fgrid" style="margin-top:52px">
       <div>
         <div class="capcard">
           <div class="big">100</div>
-          <div class="lbl">Foundation memberships. Then they're gone.</div>
+          <div class="lbl">Foundation memberships</div>
         </div>
-        <ul class="stack">
-          <li><span class="n">01</span><div class="t"><b>One of only 100</b><span>Foundation membership is capped. Once the 100 are taken, the rate closes for good.</span></div></li>
-          <li><span class="n">02</span><div class="t"><b>Your founding rate, locked</b><span>Lock your membership price before we open. It stays yours while you stay a member.</span></div></li>
-          <li><span class="n">03</span><div class="t"><b>First pick of the timetable</b><span>Founding members choose their class times before anyone else.</span></div></li>
-          <li><span class="n">04</span><div class="t"><b>Start with the 21 day intro</b><span>Try everything first with the founding intro, then step into one of the 100.</span></div></li>
-        </ul>
       </div>
       <div>
         <div class="eyebrow" style="margin-bottom:22px">What Happens Next</div>
         <ul class="timeline">
-          <li><b>Join the founding list</b><span>Add your details today. No payment, no commitment.</span></li>
-          <li><b>We keep you close</b><span>You hear everything first: the space, the teachers, the timetable.</span></li>
-          <li><b>Your founding intro drops</b><span>Before the public, you get first access to the 21 day intro.</span></li>
-          <li><b>Doors open at the Jetty</b><span>Come in, feel the heat, and find your flow. Opening night comes with a launch party and live DJs.</span></li>
-          <li><b>Claim one of the 100</b><span>Step from your intro into a foundation membership at your locked rate.</span></li>
+          <li><b>Claim your two free classes</b><span>Leave your details. There is no payment and no commitment.</span></li>
+          <li><b>We get in touch</b><span>Dale or the FLOW team helps you choose where to start.</span></li>
+          <li><b>Choose your first class</b><span>Use the Heat, Level and Flow ratings to find a comfortable starting point.</span></li>
+          <li><b>Experience FLOW twice</b><span>Feel the room, meet the team and see how FLOW fits.</span></li>
+          <li><b>Decide what comes next</b><span>If FLOW feels right, ask about Foundation 100 membership.</span></li>
         </ul>
-        <a href="#register" class="btn" style="margin-top:14px">Join The Founding List</a>
+        <a href="#register" class="btn" style="margin-top:14px">Claim My Two Free Classes</a>
       </div>
     </div>
   </div>
@@ -376,8 +373,8 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
     <div class="sec-head">
       <span class="eyebrow">New Here?</span>
       <h2 class="big">Never Done Yoga? Perfect.</h2>
-      <p class="lede">You are never thrown in the deep end. When you start your intro, you book a one on one with us. We understand what you actually want, whether that is mobility, recovery, less stress or better sleep, and we map a pathway to get you there, class by class.</p>
-      <a href="#register" class="btn" style="margin-top:24px">Join The Founding List</a>
+      <p class="lede">You do not need any yoga experience. Dale or the FLOW team will help you read the Heat, Level and Flow ratings and choose a first class that fits where you are today.</p>
+      <a href="#register" class="btn" style="margin-top:24px">Claim My Two Free Classes</a>
     </div>
   </div>
 </section>
@@ -386,10 +383,10 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
 <section class="pad finalcta system">
   <div class="glow"></div>
   <div class="wrap">
-    <span class="eyebrow">Founding Presale · Only 100 Foundation Spots</span>
-    <h2 style="margin-top:16px">Be One Of The 100.</h2>
-    <p>The founding rate closes the moment the studio fills. Join the list now to lock first access, before the doors open on the Jetty.</p>
-    <a href="#register" class="btn">Join The Founding List</a>
+    <span class="eyebrow">Two Free Classes · FLOW Coffs Harbour</span>
+    <h2 style="margin-top:16px">Come Feel FLOW For Yourself.</h2>
+    <p>Start with two free classes. Leave your details and the FLOW team will help you choose your first one.</p>
+    <a href="#register" class="btn">Claim My Two Free Classes</a>
   </div>
 </section>
 
@@ -427,7 +424,7 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
   regform.addEventListener('submit', async e=>{
     e.preventDefault();
     const btn=document.getElementById('regbtn');
-    btn.disabled=true; btn.textContent='One moment\u2026';
+    btn.disabled=true; btn.textContent='One moment…';
     const p=new URLSearchParams(location.search);
     const ck=n=>{const m=document.cookie.match(new RegExp('(?:^|; )'+n+'=([^;]*)'));return m?decodeURIComponent(m[1]):''};
     const eventId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():'l'+Date.now()+Math.random().toString(16).slice(2);
@@ -445,7 +442,7 @@ src="https://www.facebook.com/tr?id=1041284571925635&ev=PageView&noscript=1"/></
       if(window.fbq)fbq('track','Lead',{},{eventID:eventId});
       location.href='/thanks/';
     }catch(err){
-      btn.disabled=false; btn.textContent='Join The Founding List';
+      btn.disabled=false; btn.textContent='Claim My Two Free Classes';
       alert('Something hiccuped sending your details. Please try again.');
     }
   });
