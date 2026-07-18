@@ -10,7 +10,7 @@ Small Express app (Kaizen client-funnel pattern, like spine-health-funnel / scoo
 
 - Static pages from `public/`
 - `POST /api/register`: every lead appends to `data/leads.jsonl` (persistent volume) FIRST; pushed to the Kaizen CRM (GHL upsert) when env is configured
-- `GET /api/stats`: secret-gated via `x-lighthouse-secret` header, for the Lighthouse funnel registry
+- `GET /api/stats`: secret-gated via `x-lighthouse-secret` header, returning the full Lighthouse funnel stats contract with recent leads, GHL outcomes, CAPI outcomes, and configuration health
 - `GET /healthz`
 
 ## Env (set in Coolify, never in this public repo)
@@ -35,12 +35,14 @@ Small Express app (Kaizen client-funnel pattern, like spine-health-funnel / scoo
 | `STATS_SECRET` | Header secret for `/api/stats` |
 | `DATA_DIR` | Defaults to `./data`; Coolify persistent volume mounts `/app/data` |
 
-Each ledger row records both `"ghl"` and `"capi"` push status (`ok` / `not-configured` / `failed-<code>` / `error`) plus the shared `event_id`. Leads captured before a credential is set carry `"not-configured"` for that channel; backfill if needed.
+Each ledger row records both `"ghl"` and `"capi"` push status plus the shared `event_id`. CAPI records `"sent"` only when Meta returns at least one accepted event. Leads captured before a credential is set carry `"not-configured"` for that channel; backfill if needed. The stats endpoint also understands legacy CAPI rows recorded as `"ok"`.
+
+The stats reader parses JSONL rows independently. A malformed row is reported through `health.ledgerHealthy` and `health.ledgerErrors` without hiding valid leads. An unreadable ledger returns HTTP 500 so Lighthouse retains its last successful snapshot.
 
 ## Deploy
 
 Coolify app on the Lighthouse droplet (170.64.153.122), manual deploy trigger (no GitHub webhook). Persistent volume at `/app/data` or a redeploy wipes the ledger.
 
-## Still to build (tracking layers per the Kaizen funnel checklist)
+## Tracking limitation
 
-- Lighthouse funnel registry entry + heartbeat
+Flow records lead delivery and CAPI outcomes in its JSONL ledger. It does not yet record page visits, so Lighthouse visit and conversion metrics remain zero while opt-in and delivery metrics are live.

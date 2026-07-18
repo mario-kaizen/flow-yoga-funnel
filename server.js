@@ -33,6 +33,13 @@ const FIELD_LABELS = {
 // the CAPI token is a secret and only ever comes from the environment.
 const META_PIXEL_ID = process.env.META_PIXEL_ID || "1041284571925635";
 const META_CAPI_TOKEN = process.env.META_CAPI_TOKEN;
+const FUNNEL_META = {
+  slug: "flow-yoga",
+  name: "Flow Yoga",
+  host: "join.findyourflow.com.au",
+  pixelId: META_PIXEL_ID,
+  ghlLocationId: process.env.GHL_LOCATION_ID || "QbAVgTOKdJPrtPKzWxsu",
+};
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -162,7 +169,13 @@ async function pushToMetaCapi(lead, eventId) {
       console.error("Meta CAPI failed", r.status, (await r.text()).slice(0, 300));
       return `failed-${r.status}`;
     }
-    return "ok";
+    const result = await r.json().catch(() => ({}));
+    const accepted = Number(result.events_received);
+    if (!Number.isFinite(accepted) || accepted < 1) {
+      console.error("Meta CAPI returned no accepted events", JSON.stringify(result).slice(0, 300));
+      return "failed-response";
+    }
+    return "sent";
   } catch (err) {
     console.error("Meta CAPI error", err.message);
     return "error";
@@ -188,25 +201,110 @@ function customFieldsForGhl(lead) {
     .map(([key, value]) => ({ id: FLOW_FIELD_IDS[key], value }));
 }
 
+function pct(numerator, denominator) {
+  return denominator ? +((numerator / denominator) * 100).toFixed(1) : 0;
+}
+
+function ghlClass(status) {
+  if (["ok", "created", "duplicate", "synced"].includes(status)) return "synced";
+  if (status == null || status === "pending" || status === "not-configured") return "pending";
+  return "failed";
+}
+
+function capiClass(status) {
+  if (status === "ok" || status === "sent") return "sent";
+  if (status == null || status === "not-configured" || status === "skipped") return "skipped";
+  return "error";
+}
+
+function buildStats(rows, ledgerErrors = 0) {
+  const leads = [...rows].reverse();
+  const synced = leads.filter((lead) => ghlClass(lead.ghl) === "synced").length;
+  const failed = leads.filter((lead) => ghlClass(lead.ghl) === "failed").length;
+  const pending = leads.filter((lead) => ghlClass(lead.ghl) === "pending").length;
+  const withFbc = leads.filter((lead) => lead.fbc).length;
+  const capiFired = leads.filter((lead) => capiClass(lead.capi) === "sent").length;
+  const capiFailed = leads.filter((lead) => capiClass(lead.capi) === "error").length;
+  const lastCapi = leads.find((lead) => lead.capi != null);
+
+  return {
+    funnel: FUNNEL_META,
+    health: {
+      capiConfigured: !!(META_PIXEL_ID && META_CAPI_TOKEN),
+      ghlConfigured: !!(process.env.GHL_PIT && process.env.GHL_LOCATION_ID),
+      lastCapiResult: lastCapi ? capiClass(lastCapi.capi) : "none",
+      lastCapiAt: lastCapi ? lastCapi.ts || null : null,
+      ledgerHealthy: ledgerErrors === 0,
+      ledgerErrors,
+    },
+    visits: {
+      total: 0,
+      today: 0,
+      week: 0,
+      withFbcPct: 0,
+      withFbpPct: 0,
+      mobilePct: 0,
+    },
+    optIns: {
+      total: leads.length,
+      synced,
+      failed,
+      pending,
+      withFbcPct: pct(withFbc, leads.length),
+    },
+    capi: {
+      fired: capiFired,
+      failed: capiFailed,
+      firedPct: pct(capiFired, leads.length),
+    },
+    conversion: 0,
+    recentVisits: [],
+    recentLeads: leads.slice(0, 50).map((lead) => ({
+      at: lead.ts || null,
+      name: lead.name || null,
+      email: lead.email || null,
+      phone: lead.phone || null,
+      ghlStatus: ghlClass(lead.ghl),
+      capiStatus: capiClass(lead.capi),
+      fbc: !!lead.fbc,
+      fbp: !!lead.fbp,
+    })),
+  };
+}
+
+function readLedgerRows() {
+  let contents;
+  try {
+    contents = fs.readFileSync(LEDGER, "utf8");
+  } catch (error) {
+    if (error && error.code === "ENOENT") return { rows: [], errors: 0, fatal: false };
+    console.error("Lead ledger read failed", error.message);
+    return { rows: [], errors: 1, fatal: true };
+  }
+
+  const rows = [];
+  let errors = 0;
+  contents.split("\n").forEach((line, index) => {
+    if (!line.trim()) return;
+    try {
+      rows.push(JSON.parse(line));
+    } catch (_error) {
+      errors += 1;
+      console.error(`Lead ledger line ${index + 1} is invalid JSON`);
+    }
+  });
+  return { rows, errors, fatal: false };
+}
+
 // Secret-gated stats for the Lighthouse registry (header auth only, never query param)
 app.get("/api/stats", (req, res) => {
   const secret = process.env.STATS_SECRET;
   if (!secret || req.headers["x-lighthouse-secret"] !== secret) {
     return res.status(401).json({ ok: false });
   }
-  let rows = [];
-  try {
-    rows = fs.readFileSync(LEDGER, "utf8").trim().split("\n").filter(Boolean).map(JSON.parse);
-  } catch (_e) {
-    /* no leads yet */
-  }
-  const weekAgo = Date.now() - 7 * 864e5;
-  res.json({
-    ok: true,
-    totalLeads: rows.length,
-    leadsLast7d: rows.filter((r) => Date.parse(r.ts) > weekAgo).length,
-    lastLeadAt: rows.length ? rows[rows.length - 1].ts : null,
-  });
+  const ledger = readLedgerRows();
+  if (ledger.fatal) return res.status(500).json({ ok: false, error: "lead ledger unavailable" });
+  res.json(buildStats(ledger.rows, ledger.errors));
 });
 
 app.listen(PORT, () => console.log(`flow-yoga-funnel listening on :${PORT}`));
