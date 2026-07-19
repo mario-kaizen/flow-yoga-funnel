@@ -195,3 +195,35 @@ test("register rejects ambiguous HTTP 200 responses as CAPI delivery failures", 
     });
   }
 });
+
+test("privacy page publishes Flow's actual collection and disclosure practices", async (t) => {
+  const { baseUrl } = await startServer(t);
+  const response = await fetch(`${baseUrl}/privacy`);
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type"), /^text\/html/);
+
+  const html = await response.text();
+  for (const requiredText of [
+    "Privacy Policy",
+    "Enlightspace Pty Ltd",
+    "dale@theverse.com.au",
+    "Meta Pixel",
+    "Conversions API",
+    "LeadConnector",
+    "19 July 2026",
+  ]) {
+    assert.ok(html.includes(requiredText), `expected privacy page to include ${requiredText}`);
+  }
+});
+
+test("public page footers link to the privacy policy", async (t) => {
+  const { baseUrl } = await startServer(t);
+
+  for (const route of ["/", "/thanks/"]) {
+    const response = await fetch(`${baseUrl}${route}`);
+    assert.equal(response.status, 200);
+    const html = await response.text();
+    assert.match(html, /<footer>[\s\S]*href="\/privacy"[\s\S]*Privacy Policy[\s\S]*<\/footer>/);
+  }
+});
