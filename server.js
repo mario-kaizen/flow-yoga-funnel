@@ -44,6 +44,16 @@ const FUNNEL_META = {
 fs.mkdirSync(DATA_DIR, { recursive: true });
 
 app.use(express.json({ limit: "32kb" }));
+// join.findyourflow.com.au is retired: every page now goes to the live intro offer.
+// The API and health routes stay so Lighthouse stats keep reading the old ledger.
+const INTRO_URL = "https://findyourflow.life/intro";
+app.use((req, res, next) => {
+  if (req.method !== "GET" && req.method !== "HEAD") return next();
+  if (req.path === "/healthz" || req.path.startsWith("/api/")) return next();
+  const query = req.originalUrl.includes("?") ? req.originalUrl.slice(req.originalUrl.indexOf("?")) : "";
+  res.redirect(301, INTRO_URL + query);
+});
+
 app.use(express.static(path.join(__dirname, "public"), { extensions: ["html"] }));
 
 app.get("/healthz", (_req, res) => res.json({ ok: true }));
